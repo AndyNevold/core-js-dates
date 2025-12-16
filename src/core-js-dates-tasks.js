@@ -138,8 +138,18 @@ function isDateInPeriod(date, period) {
  * '1999-01-05T02:20:00.000Z' => '1/5/1999, 2:20:00 AM'
  * '2010-12-15T22:59:00.000Z' => '12/15/2010, 10:59:00 PM'
  */
-function formatDate(/* date */) {
-  throw new Error('Not implemented');
+function formatDate(date) {
+  const options = {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hour12: true,
+    timeZone: 'UTC',
+  };
+  return new Intl.DateTimeFormat('en-US', options).format(new Date(date));
 }
 
 /**
@@ -154,8 +164,17 @@ function formatDate(/* date */) {
  * 12, 2023 => 10
  * 1, 2024 => 8
  */
-function getCountWeekendsInMonth(/* month, year */) {
-  throw new Error('Not implemented');
+function getCountWeekendsInMonth(month, year) {
+  const weekendArr = [];
+
+  for (let i = 1; i <= new Date(year, month, 0).getDate(); i += 1) {
+    const date = new Date(year, month - 1, i);
+
+    if (date.getDay() === 6 || date.getDay() === 0) {
+      weekendArr.push(date);
+    }
+  }
+  return weekendArr.length;
 }
 
 /**
@@ -171,8 +190,17 @@ function getCountWeekendsInMonth(/* month, year */) {
  * Date(2024, 0, 31) => 5
  * Date(2024, 1, 23) => 8
  */
-function getWeekNumberByDate(/* date */) {
-  throw new Error('Not implemented');
+function getWeekNumberByDate(date) {
+  const dateUtc = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+  );
+  const dayCount = dateUtc.getDay() || 7;
+  dateUtc.setUTCDate(dateUtc.getDate() + 4 - dayCount);
+  return Math.ceil(
+    ((dateUtc - new Date(Date.UTC(dateUtc.getFullYear(), 0, 1))) / 86400000 +
+      1) /
+      7
+  );
 }
 
 /**
@@ -186,8 +214,14 @@ function getWeekNumberByDate(/* date */) {
  * Date(2024, 0, 13) => Date(2024, 8, 13)
  * Date(2023, 1, 1) => Date(2023, 9, 13)
  */
-function getNextFridayThe13th(/* date */) {
-  throw new Error('Not implemented');
+function getNextFridayThe13th(date) {
+  const cloneDate = new Date(date);
+  cloneDate.setDate(13);
+  while (cloneDate.getDay() !== 5) {
+    cloneDate.setMonth(cloneDate.getMonth() + 1);
+    cloneDate.setDate(13);
+  }
+  return cloneDate;
 }
 
 /**
