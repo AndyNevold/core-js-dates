@@ -235,8 +235,9 @@ function getNextFridayThe13th(date) {
  * Date(2024, 5, 1) => 2
  * Date(2024, 10, 10) => 4
  */
-function getQuarter(/* date */) {
-  throw new Error('Not implemented');
+function getQuarter(date) {
+  const month = date.getMonth() + 1;
+  return Math.ceil(month / 3);
 }
 
 /**
@@ -257,8 +258,37 @@ function getQuarter(/* date */) {
  * { start: '01-01-2024', end: '15-01-2024' }, 1, 3 => ['01-01-2024', '05-01-2024', '09-01-2024', '13-01-2024']
  * { start: '01-01-2024', end: '10-01-2024' }, 1, 1 => ['01-01-2024', '03-01-2024', '05-01-2024', '07-01-2024', '09-01-2024']
  */
-function getWorkSchedule(/* period, countWorkDays, countOffDays */) {
-  throw new Error('Not implemented');
+function getWorkSchedule(period, countWorkDays, countOffDays) {
+  const tempPeriodStart = period.start.split('-');
+  const tempPeriodEnd = period.end.split('-');
+  const start = new Date(
+    tempPeriodStart[2],
+    tempPeriodStart[1] - 1,
+    tempPeriodStart[0]
+  );
+  const end = new Date(
+    tempPeriodEnd[2],
+    tempPeriodEnd[1] - 1,
+    tempPeriodEnd[0]
+  );
+
+  let result = [];
+  while (start.getTime() <= end.getTime()) {
+    for (let i = 0; i < countWorkDays; i += 1) {
+      if (start.getTime() > end.getTime()) break;
+      result = [
+        ...result,
+        `${start.getDate() < 10 ? `0${start.getDate()}` : start.getDate()}-${
+          start.getMonth() + 1 < 10
+            ? `0${start.getMonth() + 1}`
+            : start.getMonth() + 1
+        }-${start.getFullYear()}`,
+      ];
+      start.setDate(start.getDate() + 1);
+    }
+    start.setDate(start.getDate() + countOffDays);
+  }
+  return result;
 }
 
 /**
@@ -273,8 +303,18 @@ function getWorkSchedule(/* period, countWorkDays, countOffDays */) {
  * Date(2022, 2, 1) => false
  * Date(2020, 2, 1) => true
  */
-function isLeapYear(/* date */) {
-  throw new Error('Not implemented');
+function isLeapYear(date) {
+  const today = date.getFullYear();
+  if (today % 4 !== 0) {
+    return false;
+  }
+  if (today % 100 !== 0) {
+    return true;
+  }
+  if (today % 400 !== 0) {
+    return false;
+  }
+  return true;
 }
 
 module.exports = {
